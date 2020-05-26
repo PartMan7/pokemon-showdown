@@ -1044,9 +1044,13 @@ export class RoomBattle extends RoomGames.RoomGame {
 			this.room.add(`|player|${slot}|${player.name}|${user.avatar}`);
 		} else {
 			const options = {
-				name: '',
+				name: ''
 			};
 			void this.stream.write(`>player ${slot} ` + JSON.stringify(options));
+
+			for (const battler of this.room.battle.players) {
+				if (battler.id === player.id) battler.id = null;
+			}
 
 			this.room.add(`|player|${slot}|`);
 		}
