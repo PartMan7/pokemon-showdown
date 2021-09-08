@@ -1767,13 +1767,14 @@ export const commands: Chat.ChatCommands = {
 	 * Help commands
 	 *********************************************************/
 
-	commands: 'help',
+	commands: 
+	,
 	h: 'help',
 	'?': 'help',
 	man: 'help',
 	help(target, room, user) {
 		if (!this.runBroadcast()) return;
-		target = target.toLowerCase();
+		target = target.toLowerCase().trim();
 		if (target.startsWith('/') || target.startsWith('!')) target = target.slice(1);
 
 		if (!target) {
