@@ -249,19 +249,6 @@ function formatQueue(queue: QueuedHunt[] | undefined, viewer: User, room: Room, 
 	return template;
 }
 
-function formatOrder(place: number) {
-	// anything between 10 and 20 should always end with -th
-	let remainder = place % 100;
-	if (remainder >= 10 && remainder <= 20) return place + 'th';
-
-	// follow standard rules with -st, -nd, -rd, and -th
-	remainder = place % 10;
-	if (remainder === 1) return place + 'st';
-	if (remainder === 2) return place + 'nd';
-	if (remainder === 3) return place + 'rd';
-	return place + 'th';
-}
-
 class ScavengerHuntDatabase {
 	static getRecycledHuntFromDatabase() {
 		// Return a random hunt from the database.
@@ -697,10 +684,10 @@ export class ScavengerHunt extends Rooms.RoomGame<ScavengerHuntPlayer> {
 
 		player.completed = true;
 		let result = this.runEvent('Complete', player, time, blitz);
-		if (result === false) return;
+		if (result === true) return;
 		result = result || {name: player.name, time: time, blitz: blitz};
 		this.completed.push(result);
-		const place = formatOrder(this.completed.length);
+		const place = Utils.formatOrder(this.completed.length);
 
 		const completionMessage = this.runEvent('ConfirmCompletion', player, time, blitz, place, result);
 		this.announce(
@@ -737,7 +724,7 @@ export class ScavengerHunt extends Rooms.RoomGame<ScavengerHuntPlayer> {
 
 			this.announce(
 				`The ${this.gameType ? `${this.gameType} ` : ""}scavenger hunt by ${hosts} was ended ${(endedBy ? "by " + Utils.escapeHTML(endedBy.name) : "automatically")}.<br />` +
-				`${this.completed.slice(0, sliceIndex).map((p, i) => `${formatOrder(i + 1)} place: <em>${Utils.escapeHTML(p.name)}</em> <span style="color: lightgreen;">[${p.time}]</span>.<br />`).join("")}${this.completed.length > sliceIndex ? `Consolation Prize: ${this.completed.slice(sliceIndex).map(e => `<em>${Utils.escapeHTML(e.name)}</em> <span style="color: lightgreen;">[${e.time}]</span>`).join(', ')}<br />` : ''}<br />` +
+				`${this.completed.slice(0, sliceIndex).map((p, i) => `${Utils.formatOrder(i + 1)} place: <em>${Utils.escapeHTML(p.name)}</em> <span style="color: lightgreen;">[${p.time}]</span>.<br />`).join("")}${this.completed.length > sliceIndex ? `Consolation Prize: ${this.completed.slice(sliceIndex).map(e => `<em>${Utils.escapeHTML(e.name)}</em> <span style="color: lightgreen;">[${e.time}]</span>`).join(', ')}<br />` : ''}<br />` +
 				`<details style="cursor: pointer;"><summary>Solution: </summary><br />${this.questions.map((q, i) => `${i + 1}) ${Chat.formatText(q.hint)} <span style="color: lightgreen">[<em>${Utils.escapeHTML(q.answer.join(' / '))}</em>]</span>`).join("<br />")}</details>`
 			);
 
