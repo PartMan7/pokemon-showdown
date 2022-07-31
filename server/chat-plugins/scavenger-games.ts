@@ -339,20 +339,17 @@ const TWISTS: {[k: string]: Twist} = {
 		onComplete(player, time, blitz) {
 			const now = Date.now();
 			const takenTime = Chat.toDurationString(now - this.startTimes[player.id], {hhmmss: true});
-			const result = {name: player.name, time: takenTime, blitz};
+			const result = {name: player.name, id: player.id, time: takenTime, blitz};
 			this.completed.push(result);
 			const place = Utils.formatOrder(this.completed.length);
 
 			this.announce(
 				Utils.html`<em>${result.name}</em> is the ${place} player to finish the hunt! (${takenTime}${(blitz ? " - BLITZ" : "")})`
 			);
+			Utils.sortBy(this.completed, entry => entry.time);
 
 			player.destroy(); // remove from user.games;
 			return true;
-		},
-
-		onEnd() {
-			Utils.sortBy(this.completed, entry => entry.time);
 		},
 	},
 };
