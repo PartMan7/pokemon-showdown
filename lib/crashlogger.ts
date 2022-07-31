@@ -29,7 +29,7 @@ export function crashlogger(
 	emailConfig: AnyObject | null = null,
 ): string | null {
 	const datenow = Date.now();
-
+	console.log(error);
 	let stack = (typeof error === 'string' ? error : (error as Error)?.stack) || '';
 	if (data) {
 		stack += `\n\nAdditional information:\n`;
